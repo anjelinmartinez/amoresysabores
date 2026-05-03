@@ -94,6 +94,14 @@
   .dl-btn:disabled { background:var(--pink-mid); color:var(--text-light); box-shadow:none; cursor:not-allowed; }
   .dl-note { text-align:center; font-size:12px; color:var(--text-light); margin-top:10px; font-weight:600; }
 
+  /* Summary card overlay */
+  .summary-overlay { display:none; position:fixed; inset:0; z-index:999; background:rgba(44,16,16,0.7); padding:20px 16px; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+  .summary-overlay.show { display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding-top:24px; }
+  .summary-instructions { color:#fff; text-align:center; font-size:14px; font-weight:700; margin-bottom:14px; line-height:1.5; letter-spacing:0.02em; }
+  .summary-instructions span { display:block; font-size:22px; margin-bottom:4px; }
+  .summary-img { width:100%; max-width:480px; border-radius:16px; display:block; touch-action:manipulation; user-select:none; -webkit-user-select:none; }
+  .summary-close { margin-top:18px; padding:12px 36px; background:#fff; color:var(--red); border:none; border-radius:99px; font-family:'Nunito',sans-serif; font-size:15px; font-weight:800; cursor:pointer; box-shadow:0 2px 12px rgba(0,0,0,0.2); }
+
   .footer { text-align:center; padding:24px 16px 40px; font-size:13px; color:var(--text-light); font-weight:700; letter-spacing:0.06em; }
   .footer span { color:var(--red); }
   canvas { display:none; }
@@ -148,12 +156,23 @@
   </div>
 
   <div class="dl-wrap">
-    <button class="dl-btn" id="dlbtn" disabled>Descargar resumen 🎀</button>
-    <div class="dl-note">Guarda la imagen y envíala por mensaje de texto</div>
+    <button class="dl-btn" id="dlbtn" disabled>Ver resumen del pedido 🎀</button>
+    <div class="dl-note">Podrás guardar la imagen y enviarla por mensaje de texto</div>
   </div>
 </div>
 
 <div class="footer">Con amor — <span>Amores y Sabores</span> ✦</div>
+
+<!-- Summary overlay -->
+<div class="summary-overlay" id="summaryOverlay">
+  <div class="summary-instructions">
+    <span>👇</span>
+    Mantén presionada la imagen para guardarla en tu galería
+  </div>
+  <img class="summary-img" id="summaryImg" src="" alt="Resumen del pedido"/>
+  <button class="summary-close" id="summaryClose">Cerrar</button>
+</div>
+
 <canvas id="cvs"></canvas>
 
 <script>
@@ -388,10 +407,25 @@ function doDownload() {
   ctx.fillStyle='#e8aaaa'; ctx.font='700 12px Arial,sans-serif'; ctx.textAlign='center';
   ctx.fillText('Con amor — Amores y Sabores  \u2736',W/2,H-20);
 
-  var a=document.createElement('a');
-  a.download='amores-y-sabores-pedido.png';
-  a.href=cvs.toDataURL('image/png'); a.click();
+  // Show as pressable image in overlay
+  document.getElementById('summaryImg').src = cvs.toDataURL('image/png');
+  var overlay = document.getElementById('summaryOverlay');
+  overlay.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
 }
+
+// Close overlay
+document.getElementById('summaryClose').addEventListener('click', function() {
+  document.getElementById('summaryOverlay').style.display = 'none';
+  document.body.style.overflow = '';
+});
+// Also close on overlay background tap
+document.getElementById('summaryOverlay').addEventListener('click', function(e) {
+  if (e.target === this) {
+    this.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+});
 
 function rr(ctx,x,y,w,h,r){
   ctx.beginPath(); ctx.moveTo(x+r,y);

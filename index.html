@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Amores y Sabores — Pedido</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Pacifico&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --red: #d42b2b;
+    --red-dark: #a81f1f;
+    --cream: #fff5f0;
+    --pink-light: #fde8e8;
+    --pink-mid: #f8c8c8;
+    --text-dark: #2c1010;
+    --text-mid: #6b3030;
+    --text-light: #b07070;
+    --white: #ffffff;
+    --shadow: 0 4px 24px rgba(212,43,43,0.10);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Nunito', sans-serif; background: var(--cream); color: var(--text-dark); min-height: 100vh; overflow-x: hidden; }
+
+  .sparkle { position: fixed; pointer-events: none; z-index: 0; font-size: 18px; color: var(--red); opacity: 0.18; animation: twinkle 3s ease-in-out infinite; }
+  .sparkle:nth-child(2) { animation-delay: 0.7s; font-size: 12px; }
+  .sparkle:nth-child(3) { animation-delay: 1.4s; font-size: 22px; }
+  .sparkle:nth-child(4) { animation-delay: 0.3s; font-size: 10px; }
+  .sparkle:nth-child(5) { animation-delay: 1.8s; font-size: 16px; }
+  .sparkle:nth-child(6) { animation-delay: 2.2s; font-size: 13px; }
+  @keyframes twinkle {
+    0%,100% { opacity: 0.12; transform: scale(1) rotate(0deg); }
+    50%      { opacity: 0.32; transform: scale(1.3) rotate(20deg); }
+  }
+
+  .hero { position: relative; background: linear-gradient(160deg,#fff0f0 0%,#fde8e8 60%,#fdd8d8 100%); border-bottom: 2px dashed var(--pink-mid); padding: 36px 24px 28px; text-align: center; overflow: hidden; }
+  .hero::before { content:''; position:absolute; top:-40px; left:-40px; width:160px; height:160px; background:radial-gradient(circle,#f8c8c8 0%,transparent 70%); border-radius:50%; }
+  .hero::after  { content:''; position:absolute; bottom:-30px; right:-30px; width:120px; height:120px; background:radial-gradient(circle,#fdd0d0 0%,transparent 70%); border-radius:50%; }
+  .logo-text { font-family:'Pacifico',cursive; font-size:38px; color:var(--red); line-height:1.1; text-shadow:3px 3px 0 rgba(212,43,43,0.12); position:relative; z-index:1; }
+  .logo-sub { font-size:13px; letter-spacing:0.18em; text-transform:uppercase; color:var(--text-mid); margin-top:6px; font-weight:700; position:relative; z-index:1; }
+  .hero-pastries { display:flex; justify-content:center; gap:6px; margin-top:12px; font-size:26px; position:relative; z-index:1; }
+
+  .total-bar { position:sticky; top:0; z-index:100; background:var(--red); color:#fff; display:flex; justify-content:space-between; align-items:center; padding:12px 20px; box-shadow:0 3px 16px rgba(212,43,43,0.35); }
+  .total-bar-label { font-size:13px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; opacity:0.85; }
+  .total-bar-amount { font-family:'Pacifico',cursive; font-size:26px; }
+  .total-bar-items { font-size:12px; opacity:0.75; font-weight:600; }
+
+  .main { padding:20px 16px; max-width:520px; margin:0 auto; }
+
+  .card { background:var(--white); border-radius:20px; box-shadow:var(--shadow); padding:20px; margin-bottom:20px; border:1.5px solid var(--pink-mid); }
+  .card-title { font-size:13px; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:var(--red); margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+  .card-title::after { content:''; flex:1; height:1.5px; background:var(--pink-mid); border-radius:2px; }
+  .field-row { display:flex; gap:10px; }
+  .field-group { flex:1; display:flex; flex-direction:column; gap:5px; }
+  .field-group label { font-size:11px; font-weight:700; color:var(--text-mid); text-transform:uppercase; letter-spacing:0.08em; }
+  .field-group input { padding:10px 13px; border:1.5px solid var(--pink-mid); border-radius:12px; font-family:'Nunito',sans-serif; font-size:14px; color:var(--text-dark); background:var(--cream); transition:border-color 0.2s; width:100%; }
+  .field-group input:focus { outline:none; border-color:var(--red); background:#fff; }
+  .field-group input::placeholder { color:var(--text-light); }
+
+  .cat-section { margin-bottom:20px; }
+  .cat-header { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .cat-badge { background:var(--red); color:#fff; font-size:11px; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; padding:4px 14px; border-radius:99px; }
+  .cat-line { flex:1; height:1.5px; background:var(--pink-mid); border-radius:2px; }
+
+  .item-card { background:var(--white); border:1.5px solid var(--pink-mid); border-radius:16px; overflow:hidden; margin-bottom:12px; transition:border-color 0.2s, box-shadow 0.2s; display:flex; gap:0; }
+  .item-img-wrap { width:110px; min-width:110px; height:110px; flex-shrink:0; }
+  .item-img { width:110px; height:110px; object-fit:cover; display:block; }
+  .item-body { flex:1; min-width:0; padding:12px 14px; display:flex; flex-direction:column; }
+
+  .item-top { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:6px; }
+  .item-name { font-size:15px; font-weight:800; color:var(--text-dark); }
+  .envase-pill { background:var(--pink-light); color:var(--text-mid); font-size:10px; font-weight:800; letter-spacing:0.06em; text-transform:uppercase; padding:3px 10px; border-radius:99px; white-space:nowrap; border:1px solid var(--pink-mid); flex-shrink:0; margin-top:2px; }
+
+  .item-flavors { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px; }
+  .flavor-tag { background:var(--cream); color:var(--red); font-size:11px; font-weight:700; padding:3px 10px; border-radius:99px; border:1.5px solid var(--pink-mid); }
+
+  .item-price { font-size:13px; font-weight:700; color:var(--text-mid); margin-bottom:12px; }
+
+  .qty-row { display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
+  .qty-label { font-size:11px; font-weight:800; color:var(--text-light); text-transform:uppercase; letter-spacing:0.08em; flex-shrink:0; }
+  .qpreset { padding:7px 16px; border-radius:99px; border:2px solid var(--pink-mid); background:var(--cream); color:var(--text-mid); font-family:'Nunito',sans-serif; font-size:14px; font-weight:800; cursor:pointer; transition:all 0.15s; line-height:1; }
+  .qpreset.selected { background:var(--red); color:#fff; border-color:var(--red); box-shadow:0 2px 10px rgba(212,43,43,0.28); }
+  .qclear { padding:7px 12px; border-radius:99px; border:2px solid var(--pink-mid); background:transparent; color:var(--text-light); font-family:'Nunito',sans-serif; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.15s; line-height:1; }
+  .qclear:hover { border-color:var(--red); color:var(--red); }
+
+  .item-subtotal { margin-top:12px; padding-top:10px; border-top:1.5px dashed var(--pink-mid); justify-content:space-between; align-items:center; display:none; }
+  .item-subtotal.show { display:flex; }
+  .item-subtotal-label { font-size:12px; font-weight:700; color:var(--text-light); text-transform:uppercase; letter-spacing:0.08em; }
+  .item-subtotal-amount { font-size:18px; font-weight:800; color:var(--red); }
+
+  .dl-wrap { margin-top:8px; }
+  .dl-btn { width:100%; padding:16px; background:var(--red); color:#fff; border:none; border-radius:16px; font-family:'Pacifico',cursive; font-size:18px; cursor:pointer; box-shadow:0 4px 20px rgba(212,43,43,0.35); transition:background 0.2s,transform 0.1s; }
+  .dl-btn:hover { background:var(--red-dark); }
+  .dl-btn:active { transform:scale(0.98); }
+  .dl-btn:disabled { background:var(--pink-mid); color:var(--text-light); box-shadow:none; cursor:not-allowed; }
+  .dl-note { text-align:center; font-size:12px; color:var(--text-light); margin-top:10px; font-weight:600; }
+
+  .footer { text-align:center; padding:24px 16px 40px; font-size:13px; color:var(--text-light); font-weight:700; letter-spacing:0.06em; }
+  .footer span { color:var(--red); }
+  canvas { display:none; }
+</style>
+</head>
+<body>
+
+<div class="sparkle" style="top:8%;left:4%">✦</div>
+<div class="sparkle" style="top:12%;right:6%">✦</div>
+<div class="sparkle" style="top:30%;left:92%">✦</div>
+<div class="sparkle" style="top:55%;left:2%">✦</div>
+<div class="sparkle" style="top:70%;right:3%">✦</div>
+<div class="sparkle" style="top:85%;left:88%">✦</div>
+
+<div class="hero">
+  <div class="logo-text">Amores y Sabores</div>
+  <div class="logo-sub">Postres &amp; Bocadillos</div>
+  <div class="hero-pastries">🍓 🧁 🍮 🍰 🍓</div>
+</div>
+
+<div class="total-bar">
+  <div>
+    <div class="total-bar-label">Tu pedido</div>
+    <div class="total-bar-items" id="item-count">0 items seleccionados</div>
+  </div>
+  <div class="total-bar-amount" id="total">$0.00</div>
+</div>
+
+<div class="main">
+  <div class="card">
+    <div class="card-title">Tu información</div>
+    <div class="field-row">
+      <div class="field-group">
+        <label for="cname">Nombre</label>
+        <input type="text" id="cname" placeholder="Tu nombre completo"/>
+      </div>
+      <div class="field-group">
+        <label for="cphone">Teléfono</label>
+        <input type="tel" id="cphone" placeholder="(555) 000-0000"/>
+      </div>
+    </div>
+  </div>
+
+  <div class="cat-section">
+    <div class="cat-header"><div class="cat-badge">🍮 Dulces</div><div class="cat-line"></div></div>
+    <div id="sweet-list"></div>
+  </div>
+
+  <div class="cat-section">
+    <div class="cat-header"><div class="cat-badge">🧆 Salados</div><div class="cat-line"></div></div>
+    <div id="savory-list"></div>
+  </div>
+
+  <div class="dl-wrap">
+    <button class="dl-btn" id="dlbtn" disabled>Descargar resumen 🎀</button>
+    <div class="dl-note">Guarda la imagen y envíala por mensaje de texto</div>
+  </div>
+</div>
+
+<div class="footer">Con amor — <span>Amores y Sabores</span> ✦</div>
+<canvas id="cvs"></canvas>
+
+<script>
+var imgMap = {
+  's0': 'images/Maracuya.png',
+  's1': 'images/Flan.png',
+  's2': 'images/Lemon.png',
+  's3': 'images/Churro.png',
+  's4': 'images/Tiramisu.png',
+  's5': 'images/Cheesecake.png',
+  's6': 'images/Tres_Leches.png',
+  's7': 'images/Cake_pop.png',
+  's8': 'images/Alfajores.png',
+  'v0': 'images/Bolas_de_yucca.png',
+  'v1': 'images/Quipes.png',
+  'v2': 'images/Pastellitos.png',
+  'v3': 'images/Croquetas.png',
+  'v4': 'images/Muffin_de_vegetales.png',
+};
+
+
+// ── Data ──────────────────────────────────────────────────────────────────
+var items = [
+  // Dulces
+  { id:'s0', name:'Maracuyá',            envase:'Vasos',      flavors:['Mousse de Maracuyá','Galletas María Crumble'], price:3.00 },
+  { id:'s1', name:'Flan',                envase:'Mini Platos', flavors:['Vainilla','Caramelo'],                         price:2.75 },
+  { id:'s2', name:'Limón',               envase:'Mini Vasos',  flavors:['Mousse de Limón','Galletas María Crumble'],    price:2.75 },
+  { id:'s3', name:'Churros',             envase:'Mini Vasos',  flavors:['Canela','Azúcar Morena','Chocolate'],          price:2.75 },
+  { id:'s4', name:'Tiramisu',            envase:'Mini Vasos',  flavors:['Café','Crema de Mascarpone','Cacao'],          price:3.00 },
+  { id:'s5', name:'Cheesecake de Fresa', envase:'Mini Vasos',  flavors:['Fresa'],                                       price:2.75 },
+  { id:'s6', name:'Tres Leches',         envase:'Vasos',       flavors:['Tres Leches'],                                 price:3.00 },
+  { id:'s7', name:'Cake Pop',            envase:'Palitos',     flavors:['Bizcocho de Vainilla','Chocolate'],            price:2.75 },
+  { id:'s8', name:'Alfajores',           envase:'Individual',  flavors:['Dulce de Leche','Tradicional'],                price:2.75 },
+  // Salados
+  { id:'v0', name:'Bola de Yuca',        envase:'Bandeja',     flavors:['Yuca Frita','Crispy'],                         price:2.75 },
+  { id:'v1', name:'Quipe',               envase:'Bandeja',     flavors:['Tradicional'],                                 price:2.75 },
+  { id:'v2', name:'Pastelitos',          envase:'Bandeja',     flavors:['Rellenos','Masa Hojaldrada'],                  price:2.75 },
+  { id:'v3', name:'Croquetas',           envase:'Bandeja',     flavors:['Cremosas','Doradas'],                          price:2.75 },
+  { id:'v4', name:'Torta de Vegetales',  envase:'Bandeja',     flavors:['Vegetariana'],                                 price:2.75 }
+];
+
+// Map id -> item for fast lookup
+var itemMap = {};
+items.forEach(function(it){ itemMap[it.id] = it; });
+
+// Current selections: id -> qty (0 = none)
+var selected = {};
+items.forEach(function(it){ selected[it.id] = 0; });
+
+// ── Render ────────────────────────────────────────────────────────────────
+function renderList(ids, containerId) {
+  var el = document.getElementById(containerId);
+  ids.forEach(function(id) {
+    var it = itemMap[id];
+    var card = document.createElement('div');
+    card.className = 'item-card';
+    card.id = 'card-' + id;
+
+    var flavorTags = it.flavors.map(function(f){ return '<span class="flavor-tag">'+f+'</span>'; }).join('');
+
+    var imgSrc = imgMap[id] || null;
+    var imgHTML = imgSrc
+      ? '<div class="item-img-wrap"><img class="item-img" src="'+imgSrc+'" alt="'+it.name+'"/></div>'
+      : '<div class="item-img-wrap" style="background:var(--pink-light);display:flex;align-items:center;justify-content:center;font-size:28px;">🍽</div>';
+
+    card.innerHTML =
+      imgHTML +
+      '<div class="item-body">' +
+      '<div class="item-top">' +
+        '<div class="item-name">'+it.name+'</div>' +
+        '<span class="envase-pill">'+it.envase+'</span>' +
+      '</div>' +
+      '<div class="item-flavors">'+flavorTags+'</div>' +
+      '<div class="item-price">$'+it.price.toFixed(2)+' c/u</div>' +
+      '<div class="qty-row">' +
+        '<span class="qty-label">Cant.</span>' +
+        '<button class="qpreset" data-id="'+id+'" data-val="12">12</button>' +
+        '<button class="qpreset" data-id="'+id+'" data-val="25">25</button>' +
+        '<button class="qpreset" data-id="'+id+'" data-val="50">50</button>' +
+        '<button class="qclear"  data-id="'+id+'">✕</button>' +
+      '</div>' +
+      '<div class="item-subtotal" id="sub-'+id+'">' +
+        '<span class="item-subtotal-label">Subtotal</span>' +
+        '<span class="item-subtotal-amount" id="sub-amt-'+id+'"></span>' +
+      '</div>' +
+      '</div>';
+
+    el.appendChild(card);
+  });
+}
+
+var sweetIds  = ['s0','s1','s2','s3','s4','s5','s6','s7','s8'];
+var savoryIds = ['v0','v1','v2','v3','v4'];
+renderList(sweetIds,  'sweet-list');
+renderList(savoryIds, 'savory-list');
+
+// ── Event delegation — ONE listener on document, zero inline handlers ─────
+document.addEventListener('click', function(e) {
+  // Preset qty button
+  if (e.target.classList.contains('qpreset')) {
+    var id  = e.target.getAttribute('data-id');
+    var val = parseInt(e.target.getAttribute('data-val'), 10);
+    setQty(id, val);
+  }
+  // Clear button
+  if (e.target.classList.contains('qclear')) {
+    var id = e.target.getAttribute('data-id');
+    setQty(id, 0);
+  }
+  // Download button
+  if (e.target.id === 'dlbtn') {
+    doDownload();
+  }
+});
+
+// ── Core logic ────────────────────────────────────────────────────────────
+function setQty(id, val) {
+  selected[id] = val;
+  var it = itemMap[id];
+
+  // Highlight selected preset button, deselect others
+  var btns = document.querySelectorAll('.qpreset[data-id="'+id+'"]');
+  btns.forEach(function(b) {
+    b.className = (parseInt(b.getAttribute('data-val'),10) === val) ? 'qpreset selected' : 'qpreset';
+  });
+
+  // Card highlight
+  var card = document.getElementById('card-'+id);
+  if (val > 0) card.classList.add('has-qty');
+  else         card.classList.remove('has-qty');
+
+  // Per-item subtotal
+  var subEl    = document.getElementById('sub-'+id);
+  var subAmtEl = document.getElementById('sub-amt-'+id);
+  if (val > 0) {
+    subAmtEl.textContent = '$' + (it.price * val).toFixed(2);
+    subEl.className = 'item-subtotal show';
+  } else {
+    subEl.className = 'item-subtotal';
+  }
+
+  updateTotals();
+}
+
+function updateTotals() {
+  var total = 0, units = 0, n = 0;
+  items.forEach(function(it) {
+    var q = selected[it.id];
+    if (q > 0) { total += it.price * q; units += q; n++; }
+  });
+
+  document.getElementById('total').textContent = '$' + total.toFixed(2);
+  document.getElementById('item-count').textContent =
+    n === 0 ? '0 items seleccionados'
+            : n + (n===1?' item':' items') + ' · ' + units + ' unidades';
+  document.getElementById('dlbtn').disabled = (n === 0);
+}
+
+// ── Download ──────────────────────────────────────────────────────────────
+function doDownload() {
+  var name  = (document.getElementById('cname').value.trim())  || 'Cliente';
+  var phone = (document.getElementById('cphone').value.trim()) || '—';
+
+  var ordered = items.filter(function(it){ return selected[it.id] > 0; });
+  var total = 0, units = 0;
+  ordered.forEach(function(it){ total += it.price * selected[it.id]; units += selected[it.id]; });
+
+  var W=700, PAD=44, rowH=66;
+  var H = 400 + ordered.length * rowH + 100;
+  var cvs = document.getElementById('cvs');
+  cvs.width=W; cvs.height=H;
+  var ctx = cvs.getContext('2d');
+
+  // BG
+  ctx.fillStyle='#fff5f0'; ctx.fillRect(0,0,W,H);
+  var g=ctx.createLinearGradient(0,0,W,130);
+  g.addColorStop(0,'#fde8e8'); g.addColorStop(1,'#fdd0d0');
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,130);
+  ctx.setLineDash([8,5]); ctx.strokeStyle='#f8c8c8'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(0,130); ctx.lineTo(W,130); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Brand
+  ctx.fillStyle='#d42b2b'; ctx.font='bold 36px Georgia,serif'; ctx.textAlign='center';
+  ctx.fillText('Amores y Sabores',W/2,56);
+  ctx.fillStyle='#b07070'; ctx.font='700 12px Arial,sans-serif';
+  ctx.fillText('POSTRES & BOCADILLOS  \u2736  RESUMEN DE PEDIDO',W/2,80);
+  ctx.font='12px Arial,sans-serif';
+  ctx.fillText(new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'}),W/2,104);
+  ctx.textAlign='left';
+
+  // Customer
+  ctx.fillStyle='#fff'; rr(ctx,PAD-8,146,W-PAD*2+16,72,14); ctx.fill();
+  ctx.strokeStyle='#f8c8c8'; ctx.lineWidth=1.5; rr(ctx,PAD-8,146,W-PAD*2+16,72,14); ctx.stroke();
+  ctx.fillStyle='#b07070'; ctx.font='700 11px Arial,sans-serif';
+  ctx.fillText('NOMBRE',PAD+4,170); ctx.fillText('TELÉFONO',PAD+310,170);
+  ctx.fillStyle='#2c1010'; ctx.font='700 17px Arial,sans-serif';
+  ctx.fillText(name,PAD+4,196); ctx.fillText(phone,PAD+310,196);
+
+  // Headers
+  var y=248;
+  ctx.fillStyle='#d42b2b'; ctx.font='700 11px Arial,sans-serif';
+  ctx.fillText('ITEM',PAD,y); ctx.fillText('ENVASE',PAD+290,y);
+  ctx.textAlign='right';
+  ctx.fillText('CANT.',W-PAD-80,y); ctx.fillText('SUBTOTAL',W-PAD,y);
+  ctx.textAlign='left';
+  ctx.strokeStyle='#f8c8c8'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(PAD,y+10); ctx.lineTo(W-PAD,y+10); ctx.stroke();
+  y+=28;
+
+  ordered.forEach(function(it,i) {
+    if (i%2===0) { ctx.fillStyle='#fff8f8'; rr(ctx,PAD-8,y-26,W-PAD*2+16,rowH,10); ctx.fill(); }
+    ctx.fillStyle='#2c1010'; ctx.font='700 15px Arial,sans-serif'; ctx.fillText(it.name,PAD,y);
+    ctx.fillStyle='#b07070'; ctx.font='12px Arial,sans-serif'; ctx.fillText(it.flavors.join(' · '),PAD,y+18);
+    ctx.fillStyle='#6b3030'; ctx.font='700 13px Arial,sans-serif'; ctx.fillText(it.envase,PAD+290,y);
+    var q=selected[it.id], sub=it.price*q;
+    ctx.textAlign='right';
+    ctx.fillStyle='#6b3030'; ctx.font='700 15px Arial,sans-serif'; ctx.fillText(q+' uds.',W-PAD-80,y);
+    ctx.fillStyle='#d42b2b'; ctx.font='700 17px Arial,sans-serif'; ctx.fillText('$'+sub.toFixed(2),W-PAD,y);
+    ctx.textAlign='left';
+    y+=rowH;
+  });
+
+  // Total bar
+  ctx.fillStyle='#fde8e8'; rr(ctx,PAD-8,y+6,W-PAD*2+16,58,12); ctx.fill();
+  ctx.fillStyle='#d42b2b'; ctx.font='bold 13px Arial,sans-serif';
+  ctx.fillText('TOTAL — '+units+' UNIDADES',PAD+8,y+30);
+  ctx.textAlign='right'; ctx.font='bold 26px Georgia,serif';
+  ctx.fillText('$'+total.toFixed(2),W-PAD-8,y+42);
+  ctx.textAlign='left';
+
+  ctx.fillStyle='#e8aaaa'; ctx.font='700 12px Arial,sans-serif'; ctx.textAlign='center';
+  ctx.fillText('Con amor — Amores y Sabores  \u2736',W/2,H-20);
+
+  var a=document.createElement('a');
+  a.download='amores-y-sabores-pedido.png';
+  a.href=cvs.toDataURL('image/png'); a.click();
+}
+
+function rr(ctx,x,y,w,h,r){
+  ctx.beginPath(); ctx.moveTo(x+r,y);
+  ctx.lineTo(x+w-r,y); ctx.arcTo(x+w,y,x+w,y+r,r);
+  ctx.lineTo(x+w,y+h-r); ctx.arcTo(x+w,y+h,x+w-r,y+h,r);
+  ctx.lineTo(x+r,y+h); ctx.arcTo(x,y+h,x,y+h-r,r);
+  ctx.lineTo(x,y+r); ctx.arcTo(x,y,x+r,y,r);
+  ctx.closePath();
+}
+</script>
+</body>
+</html>
